@@ -16,11 +16,13 @@ public class Movie {
 
     // 생성자
     // 받아와야 할 데이터 생각하기
+    // serialNumber 자동부여, charge 대여금액 자동부여, rental 대여상태 자동변경
     public Movie(String movieName, String nation, int pubYear) {
         this.serialNumber = ++sequence;
         this.movieName = movieName;
         this.nation = nation;
         this.pubYear = pubYear;
+        this.charge = ChargePolicy.calculateDvdCharge(this.pubYear);
     }
 
     // getter & setter

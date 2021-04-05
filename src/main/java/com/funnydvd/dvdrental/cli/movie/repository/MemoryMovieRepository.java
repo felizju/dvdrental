@@ -11,17 +11,18 @@ import java.util.Map;
 
 public class MemoryMovieRepository implements MovieRepository {
 
-
     // 영화 정보들을 저장할 자료구조
+    // Map<key,value> Map<getSerialNumber(), Movie>
     private static final Map<Integer, Movie> movieMemoryDB = new HashMap<>();
-
 
     // static 초기화 (자료 저장하기)
     static {
         insertTestData();
     }
 
+    // 기초 자료 저장
     private static void insertTestData() {
+        // 각 객체 생성
         Movie movie1 = new Movie("인터스텔라", "미국", 2014);
         Movie movie2 = new Movie("포레스트 검프", "미국", 1994);
         Movie movie3 = new Movie("너의 이름은", "일본", 2017);
@@ -32,7 +33,8 @@ public class MemoryMovieRepository implements MovieRepository {
         Movie movie8 = new Movie("인생은 아름다워", "이탈리아", 1999);
         Movie movie9 = new Movie("쇼생크 탈출", "미국", 1995);
         Movie movie10 = new Movie("기생충", "대한민국", 2019);
-
+        
+        // movieMemoryDB.put(key, value)
         movieMemoryDB.put(movie1.getSerialNumber(), movie1);
         movieMemoryDB.put(movie2.getSerialNumber(), movie2);
         movieMemoryDB.put(movie3.getSerialNumber(), movie3);
@@ -45,52 +47,132 @@ public class MemoryMovieRepository implements MovieRepository {
         movieMemoryDB.put(movie10.getSerialNumber(), movie10);
     }
 
-
     @Override
-    public void addMovie(Movie movie) {
+    public void addMovie(Movie movie) { // dvd생성
+        // movieMemoryDB.put(key, value)
         movieMemoryDB.put(movie.getSerialNumber(), movie);
     }
 
     @Override
-    public List<Movie> searchMovieList(String keyword, SearchCondition condition) {
+    public List<Movie> searchMovieList(String keyword, SearchCondition condition) { // dvd검색 - 조건별
 
         // 호출 부에 전달할 검색데이터 리스트
         List<Movie> results = null;
 
         switch (condition){
             case TITLE:
+//                results = searchByTitle(keyword);
+                results = search(keyword, (k, m) -> k.equals(m.getMovieName()));
                 break;
             case NATION:
+//                results = searchByNation(keyword);
+                results = search(keyword, (k, m) -> k.equals(m.getNation()));
                 break;
             case PUB_YEAR:
+//                results = searchByPubYear(keyword);
+                results = search(keyword, (k, m) -> Integer.parseInt(k) == m.getPubYear());
                 break;
             case ALL:
-                results = searchAll();
+//                results = searchAll();
+                results = search(keyword, (k, m) -> true); // true주면 전부 다 리턴 - 전체 리스트
+                break;
+            case POSSIBLE:
+                results = search(keyword, (k, m) -> !m.isRental());
                 break;
             default:
                 return null;
         }
         return results;
     }
-
-    private List<Movie> searchAll() {
-
+    
+    // 공통코드 - 콜백 함수로 정규화 시키기
+    private List<Movie> search(String keyword, MoviePredicate mp){
         List<Movie> movieList = new ArrayList<>();
-
-        for (int key : movieMemoryDB.keySet()) {
+        for (Integer key : movieMemoryDB.keySet()) {
             Movie movie = movieMemoryDB.get(key);
-            movieList.add(movie);
+
+            // 검색 키워드와 발매연도 일치하는 movie만 리스트에 추가
+            if(mp.test(keyword, movie)){
+                movieList.add(movie);
+            }
         }
         return movieList;
     }
 
-    @Override
-    public Movie searchMovieOne(int serialNumber) {
-        return movieMemoryDB.get(serialNumber); // get 하면 value 반환
+/*
+
+    // 발매연도로 검색
+    private List<Movie> searchByPubYear(String keyword) {
+        List<Movie> movieList = new ArrayList<>();
+        for (Integer key : movieMemoryDB.keySet()) {
+            Movie movie = movieMemoryDB.get(key);
+
+            // 검색 키워드와 발매연도 일치하는 movie만 리스트에 추가 (중복)
+            if(Integer.parseInt(keyword) == movie.getPubYear()){
+                movieList.add(movie);
+            }
+        }
+        return movieList;
     }
 
+    // 국가별로 검색
+    private List<Movie> searchByNation(String keyword) {
+        List<Movie> movieList = new ArrayList<>();
+        for (Integer key : movieMemoryDB.keySet()) {
+            Movie movie = movieMemoryDB.get(key);
+
+            // 검색 키워드와 국가가 일치하는 movie만 리스트에 추가 (중복)
+            if(keyword.equals(movie.getNation())){
+                movieList.add(movie);
+            }
+        }
+        return movieList;
+    }
+
+
+    // 제목으로 검색
+    private List<Movie> searchByTitle(String keyword) {
+        List<Movie> movieList = new ArrayList<>();
+        for (Integer key : movieMemoryDB.keySet()) {
+            Movie movie = movieMemoryDB.get(key);
+
+            // 검색 키워드와 제목이 일치하는 movie만 리스트에 추가 (중복)
+            if(keyword.equals(movie.getMovieName())){
+                movieList.add(movie);
+            }
+        }
+        return movieList;
+    }
+
+    // 전체 검색
+    private List<Movie> searchAll() {
+        List<Movie> movieList = new ArrayList<>();
+
+        for (int key : movieMemoryDB.keySet()) {
+            Movie movie = movieMemoryDB.get(key); // get(key)로 value 반환
+            movieList.add(movie);
+        }
+        return movieList;
+    }
+*/
+
+
     @Override
-    public void removeMovie(int serialNumber) {
+    public Movie searchMovieOne(int serialNumber) { // dvd 검색 - 1개
+        return movieMemoryDB.get(serialNumber); // get(key)로 value 반환
+    }
+
+
+    @Override
+    public void removeMovie(int serialNumber) { // dvd 삭제
+        // movieMemoryDB.remove(key)
         movieMemoryDB.remove(serialNumber);
+    }
+
+
+    // 영화 검색 조건을 위한 인터페이스 (내부)
+    @FunctionalInterface // 람다식 가능한지 오류 확인해줌
+    interface MoviePredicate{
+        boolean test(String keyword, Movie movie);
     }
 }
