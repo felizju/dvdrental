@@ -16,7 +16,7 @@ class MemoryMovieRepositoryTest {
     @Test
     @DisplayName("영화를 저장요청하면 메모리 디비에 잘 저장되어야 한다.")
     void insertTest(){
-        Movie newMovie = new Movie("nojam movie", "korea", 2012);
+        Movie newMovie = new Movie("nojam movie", "korea", 2016);
 
         repository.addMovie(newMovie);
 
