@@ -84,6 +84,7 @@ public class MemoryMovieRepository implements MovieRepository {
         }
         return results;
     }
+
     
     // 공통코드 - 콜백 함수로 정규화 시키기
     private List<Movie> search(String keyword, MoviePredicate mp){
