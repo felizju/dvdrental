@@ -1,10 +1,10 @@
 package com.funnydvd.dvdrental.cli.movie.controller;
 
+import com.funnydvd.dvdrental.cli.main.AppController;
 import com.funnydvd.dvdrental.cli.movie.domain.Movie;
 import com.funnydvd.dvdrental.cli.movie.domain.SearchCondition;
 import com.funnydvd.dvdrental.cli.movie.repository.MemoryMovieRepository;
 import com.funnydvd.dvdrental.cli.movie.repository.MovieRepository;
-import com.funnydvd.dvdrental.cli.ui.AppUI;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import static com.funnydvd.dvdrental.cli.movie.domain.SearchCondition.*;
 import static com.funnydvd.dvdrental.cli.ui.AppUI.*;
 
 // 영화관리 시스템의 분기를 제어
-public class MovieController {
+public class MovieController implements AppController {
 
     // 영화 저장소와 의존 관계 설정 (포함관계)
     private final MovieRepository movieRepository;
@@ -28,6 +28,7 @@ public class MovieController {
 
             movieManagementScreen();
             int selection = inputInteger(">>> ");
+
             switch (selection){
                 case 1:
                     insertMovieData();

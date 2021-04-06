@@ -1,5 +1,7 @@
 package com.funnydvd.dvdrental.cli.movie.domain;
 
+import com.funnydvd.dvdrental.cli.user.domain.User;
+
 // 역할 : 이 클래스는 하나의 DVD 정보를 저장할 수 있어야 한다.
 public class Movie {
 
@@ -9,7 +11,7 @@ public class Movie {
     private int pubYear; // 영화 발매년도
     private int charge; // dvd 대여 금액
     private boolean rental; // dvd 대여 상태
-//    private  User rentalUser; // 현재 대여자 정보
+    private User rentalUser; // 현재 대여자 정보
 
     // 일련번호 (static 으로 공유)
     private static int sequence;
@@ -82,13 +84,21 @@ public class Movie {
         Movie.sequence = sequence;
     }
 
+    public User getRentalUser() {
+        return rentalUser;
+    }
+
+    public void setRentalUser(User rentalUser) {
+        this.rentalUser = rentalUser;
+    }
+
     // toString
     @Override
     public String toString() {
+        String rental = this.rental ? "대여중" : "대여가능";
 
-        String rental = this.rental ? "대여 중" : "대여가능";
-
-        return String.format("### DVD번호 : %s, 영화명 : %s, 국가명 : %s , 발매연도 : %d년 , 대여료 : %d원 , 대여상태 : %s"
-                , this.serialNumber, this.movieName, this.nation, this.pubYear, this.charge, this.rental);
+        return String.format("### DVD번호: %s, 영화명: %s, " +
+                        "국가명: %s, 발매연도: %d년, 대여료: %d원, 대여상태: %s"
+                , serialNumber, movieName, nation, pubYear, charge, rental);
     }
 }
