@@ -3,6 +3,7 @@ package com.funnydvd.dvdrental.cli.movie.controller;
 import com.funnydvd.dvdrental.cli.main.AppController;
 import com.funnydvd.dvdrental.cli.movie.domain.Movie;
 import com.funnydvd.dvdrental.cli.movie.domain.SearchCondition;
+import com.funnydvd.dvdrental.cli.movie.repository.JdbcMovieRepository;
 import com.funnydvd.dvdrental.cli.movie.repository.MemoryMovieRepository;
 import com.funnydvd.dvdrental.cli.movie.repository.MovieRepository;
 
@@ -18,7 +19,8 @@ public class MovieController implements AppController {
     private final MovieRepository movieRepository;
 
     public MovieController() {
-        movieRepository = new MemoryMovieRepository();
+//        movieRepository = new MemoryMovieRepository();
+        movieRepository = new JdbcMovieRepository();
     }
 
 

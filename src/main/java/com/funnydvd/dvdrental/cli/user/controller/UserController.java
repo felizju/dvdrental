@@ -2,6 +2,7 @@ package com.funnydvd.dvdrental.cli.user.controller;
 
 import com.funnydvd.dvdrental.cli.main.AppController;
 import com.funnydvd.dvdrental.cli.user.domain.User;
+import com.funnydvd.dvdrental.cli.user.repository.JdbcUserRepository;
 import com.funnydvd.dvdrental.cli.user.repository.MemoryUserRepository;
 import com.funnydvd.dvdrental.cli.user.repository.UserRepository;
 
@@ -13,7 +14,9 @@ import static com.funnydvd.dvdrental.cli.ui.AppUI.*;
 public class UserController implements AppController {
 
     // 영화 저장소와 의존 관계 설정 (포함관계)
-    private final UserRepository userRepository = new MemoryUserRepository();
+//    private final UserRepository userRepository = new MemoryUserRepository();
+    private final UserRepository userRepository = new JdbcUserRepository();
+
 
     // 제어 시작 기능
     public void start(){

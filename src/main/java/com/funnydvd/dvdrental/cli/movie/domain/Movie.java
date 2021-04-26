@@ -1,6 +1,10 @@
 package com.funnydvd.dvdrental.cli.movie.domain;
 
+import com.funnydvd.dvdrental.cli.user.domain.Grade;
 import com.funnydvd.dvdrental.cli.user.domain.User;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 // 역할 : 이 클래스는 하나의 DVD 정보를 저장할 수 있어야 한다.
 public class Movie {
@@ -26,6 +30,18 @@ public class Movie {
         this.pubYear = pubYear;
         this.charge = ChargePolicy.calculateDvdCharge(this.pubYear);
     }
+
+
+    // DB조회 데이터 처리 생성자
+    public Movie(ResultSet rs) throws SQLException { // 예외처리는 호출한 곳에서 처리
+        this.serialNumber = rs.getInt("serial_number");
+        this.movieName = rs.getString("movie_name");
+        this.nation = rs.getString("nation");
+        this.pubYear = Integer.parseInt(rs.getString("pub_year"));
+        this.charge = rs.getInt("charge");
+        this.rental = rs.getString("rental").equals("T");
+    }
+
 
     // getter & setter
     public int getSerialNumber() {
