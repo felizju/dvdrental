@@ -15,8 +15,11 @@ public class UserController implements AppController {
 
     // 영화 저장소와 의존 관계 설정 (포함관계)
 //    private final UserRepository userRepository = new MemoryUserRepository();
-    private final UserRepository userRepository = new JdbcUserRepository();
+    private final UserRepository userRepository;
 
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     // 제어 시작 기능
     public void start(){
