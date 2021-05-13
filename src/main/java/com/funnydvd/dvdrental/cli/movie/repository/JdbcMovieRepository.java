@@ -19,6 +19,7 @@ public class JdbcMovieRepository implements MovieRepository {
     private String driverClassName = "oracle.jdbc.driver.OracleDriver";
 
 
+    // 영화추가
     @Override
     public void addMovie(Movie movie) {
         try(Connection conn = DriverManager.getConnection(url, id, pw)){
@@ -30,7 +31,7 @@ public class JdbcMovieRepository implements MovieRepository {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, movie.getMovieName());
             pstmt.setString(2, movie.getNation());
-            pstmt.setString(3, ""+movie.getPubYear()); // 빈문자열 더하면 String변환
+            pstmt.setString(3, ""+movie.getPubYear()); // 빈문자열 더하면 String 변환
             pstmt.setInt(4, movie.getCharge());
 
             pstmt.executeUpdate();
@@ -40,16 +41,18 @@ public class JdbcMovieRepository implements MovieRepository {
         }
     }
 
+    // 영화검색 - 조건별
     @Override
     public List<Movie> searchMovieList(String keyword, SearchCondition condition) { // 타이만 검색해도 타이타닉 검색되도록!
 
-        keyword = keyword.trim(); // 앞뒤 공백 제거
         List<Movie> movieList = new ArrayList<>();
+        keyword = keyword.trim(); // 앞뒤 공백 제거
 
         try(Connection conn = DriverManager.getConnection(url, id, pw)){
             Class.forName(driverClassName);
 
-            String sql = "SELECT * FROM dvd_movie "; // 해당 sql에 아래 조건에 따라 where절 +=으로 덧붙이기
+            String sql = "SELECT * FROM dvd_movie ";
+            // 해당 sql에 아래 조건에 따라 where절 +=으로 덧붙이기
 
             switch (condition) {
                 case TITLE:
@@ -76,9 +79,8 @@ public class JdbcMovieRepository implements MovieRepository {
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
-
             if(condition != SearchCondition.ALL){
-                pstmt.setString(1,keyword);
+                pstmt.setString(1, keyword);
             }
 
             ResultSet rs = pstmt.executeQuery();
@@ -87,7 +89,6 @@ public class JdbcMovieRepository implements MovieRepository {
                 movieList.add(new Movie(rs));
             }
             return movieList;
-
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -95,6 +96,7 @@ public class JdbcMovieRepository implements MovieRepository {
     }
 
 
+    // 영화검색 - 단일행
     @Override
     public Movie searchMovieOne(int serialNumber) {
         try(Connection conn = DriverManager.getConnection(url, id, pw)){
@@ -110,13 +112,14 @@ public class JdbcMovieRepository implements MovieRepository {
             if(rs.next()){
                 return new Movie(rs);
             }
-
         }catch (Exception e){
             e.printStackTrace();
         }
         return null;
     }
 
+
+    // 영화삭제
     @Override
     public void removeMovie(int serialNumber) {
         try(Connection conn = DriverManager.getConnection(url, id, pw)){
@@ -128,7 +131,6 @@ public class JdbcMovieRepository implements MovieRepository {
             pstmt.setInt(1, serialNumber);
 
             pstmt.executeUpdate();
-
         }catch (Exception e){
             e.printStackTrace();
         }

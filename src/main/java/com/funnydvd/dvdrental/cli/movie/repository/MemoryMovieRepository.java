@@ -3,7 +3,6 @@ package com.funnydvd.dvdrental.cli.movie.repository;
 import com.funnydvd.dvdrental.cli.movie.domain.Movie;
 import com.funnydvd.dvdrental.cli.movie.domain.SearchCondition;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,14 +46,17 @@ public class MemoryMovieRepository implements MovieRepository {
         movieMemoryDB.put(movie10.getSerialNumber(), movie10);
     }
 
+
+    // 영화추가
     @Override
     public void addMovie(Movie movie) { // dvd생성
         // movieMemoryDB.put(key, value)
         movieMemoryDB.put(movie.getSerialNumber(), movie);
     }
 
+    // 영화검색 - 조건별
     @Override
-    public List<Movie> searchMovieList(String keyword, SearchCondition condition) { // dvd검색 - 조건별
+    public List<Movie> searchMovieList(String keyword, SearchCondition condition) {
 
         // 호출 부에 전달할 검색데이터 리스트
         List<Movie> results = null;
@@ -158,17 +160,22 @@ public class MemoryMovieRepository implements MovieRepository {
 */
 
 
+    // 영화검색 - 단일행
     @Override
     public Movie searchMovieOne(int serialNumber) { // dvd 검색 - 1개
         return movieMemoryDB.get(serialNumber); // get(key)로 value 반환
     }
 
 
+    // 영화삭제
     @Override
     public void removeMovie(int serialNumber) { // dvd 삭제
         // movieMemoryDB.remove(key)
         movieMemoryDB.remove(serialNumber);
     }
+
+
+
 
 
     // 영화 검색 조건을 위한 인터페이스 (내부)

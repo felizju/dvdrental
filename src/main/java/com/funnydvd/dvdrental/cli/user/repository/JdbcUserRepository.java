@@ -1,6 +1,5 @@
 package com.funnydvd.dvdrental.cli.user.repository;
 
-import com.funnydvd.dvdrental.cli.movie.study.anonymous.Driver;
 import com.funnydvd.dvdrental.cli.user.domain.User;
 
 import java.sql.*;
@@ -8,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // 회원 데이터를 데이터베이스에 CRUD 하는 DB 접근 클래스
-public class JdbcUserRepository implements UserRepository{
+public class JdbcUserRepository implements UserRepository {
 
     // 데이터베이스 연결 접속 정보
     private String id = "java_web2";
@@ -16,13 +15,15 @@ public class JdbcUserRepository implements UserRepository{
     private String url = "jdbc:oracle:thin:@localhost:1521:xe";
     private String driverClassName = "oracle.jdbc.driver.OracleDriver";
 
+
+    // 회원가입
     @Override
     public void addUser(User user) {
 
         try(Connection conn = DriverManager.getConnection(url, id, pw)){
             Class.forName(driverClassName);
 
-            String sql = "INSERT INTO dvd_user (user_number, user_name, phone_number) VALUES (seq_dvd_user.nextval, ?,?)";
+            String sql = "INSERT INTO dvd_user (user_number, user_name, phone_number) VALUES (seq_dvd_user.nextval,?,?)";
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1,user.getUserName());
@@ -35,10 +36,13 @@ public class JdbcUserRepository implements UserRepository{
         }
     }
 
+
+    // 회원조회 - 다중행
     @Override
     public List<User> findAllByName(String userName) {
 
         List<User> userList = new ArrayList<>();
+        
         try(Connection conn = DriverManager.getConnection(url, id, pw)){
             Class.forName(driverClassName);
 
@@ -50,6 +54,10 @@ public class JdbcUserRepository implements UserRepository{
             ResultSet rs = pstmt.executeQuery();
 
             while(rs.next()){
+                // 아래 작업을 생성자 처리로 하여 간편하게 만듦 --> userList.add(new User(rs));
+//                User user = new User(rs.getString("userName"), rs.getString("phoneNumber"), ...);
+//                userList.add(user);
+
                 userList.add(new User(rs)); // 한줄한줄 꺼내와서 userList add 반복 처리
             }
             return userList;
@@ -61,6 +69,7 @@ public class JdbcUserRepository implements UserRepository{
     }
 
 
+    // 회원조회 - 단일행
     @Override
     public User findByUserNumber(int userNumber) {
 
@@ -85,11 +94,13 @@ public class JdbcUserRepository implements UserRepository{
         return null;
     }
 
+
+
+    // 회원탈퇴
     @Override
     public User deleteUser(int userNumber) {
 
         Connection conn = null;
-
         try{
             conn = DriverManager.getConnection(url, id, pw);
             Class.forName(driverClassName);
@@ -109,10 +120,9 @@ public class JdbcUserRepository implements UserRepository{
                 conn.commit(); // 트랜잭션이 성공했을 경우만 커밋
                 return delUser;
             }
-
         }catch (Exception e){
             try {
-                conn.rollback(); // 트랜잭션 실패시 롤백
+                conn.rollback(); // 트랜잭션 실패 시 롤백
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
